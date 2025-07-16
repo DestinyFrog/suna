@@ -1,5 +1,7 @@
 
 local distancia_atomos = 30
+local distancia_atomo_ligacao = 8
+
 local atomos_com_posicao = {}
 
 ---Trata cada atomo
@@ -31,13 +33,37 @@ for _, atomo in pairs(atomos_com_posicao) do
     if atomo.y < min_y then min_y = atomo.y end
 end
 
+local cx = math.abs(min_x)
+local cy = math.abs(min_y)
+
 local Svg = require "ferramenta.svg"
 local svg = Svg:new()
 
 for _, atomo in pairs(atomos_com_posicao) do
     svg:text(atomo.atomo.simbolo,
-        math.abs(min_x) + atomo.x,
-        math.abs(min_y) + atomo.y)
+        cx + atomo.x,
+        cy + atomo.y)
+end
+
+for a, colunas in ipairs(MOLECULA.ligacoes) do
+    for b, ligacao in ipairs(colunas) do
+        if ligacao ~= 0 then
+            local angulo = CalcularAngulo(atomos_com_posicao[a].x, atomos_com_posicao[a].y, atomos_com_posicao[b].x, atomos_com_posicao[b].y)
+            local angulo_antipodal = angulo + math.pi
+
+            local ax_com_distancia = distancia_atomo_ligacao * math.cos(angulo)
+            local ay_com_distancia = distancia_atomo_ligacao * math.sin(angulo)
+            local ax = cx + atomos_com_posicao[a].x + ax_com_distancia
+            local ay = cy + atomos_com_posicao[a].y + ay_com_distancia
+
+            local bx_com_distancia = distancia_atomo_ligacao * math.cos(angulo_antipodal)
+            local by_com_distancia = distancia_atomo_ligacao * math.sin(angulo_antipodal)
+            local bx = cx + atomos_com_posicao[b].x + bx_com_distancia
+            local by = cy + atomos_com_posicao[b].y + by_com_distancia
+
+            svg:line(ax, ay, bx, by)
+        end
+    end
 end
 
 SAIDA = svg:build()

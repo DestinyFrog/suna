@@ -14,3 +14,10 @@ end
 function GrausParaRadianos(graus)
     return graus * (math.pi / 180)
 end
+
+function CalcularAngulo(ax, ay, bx, by)
+    local deltaX = bx - ax
+    local deltaY = by - ay
+    local angulo = math.atan(deltaY, deltaX)
+    return angulo
+end

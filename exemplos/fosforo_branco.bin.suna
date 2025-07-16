@@ -1,0 +1,12 @@
+NOME fósforo branco
+STAG inorgânico
+ATOM P 0
+ATOM P 0
+ATOM P 0
+ATOM P 0
+LIGA 1 2 simples covalente 45
+LIGA 2 3 simples covalente 135
+LIGA 3 4 simples covalente 225
+LIGA 4 1 simples covalente 315
+LIGA 1 3 simples covalente 90
+LIGA 2 4 simples covalente 180

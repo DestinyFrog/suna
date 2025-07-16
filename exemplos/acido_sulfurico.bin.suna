@@ -1,0 +1,21 @@
+NOME água
+STAG inorgânico
+ATOM S 0
+
+ATOM O 0
+LIGA 1 2 simples covalente 45
+
+ATOM O 0
+LIGA 1 3 dupla covalente 135
+
+ATOM O 0
+LIGA 1 4 simples covalente 225
+
+ATOM O 0
+LIGA 1 5 dupla covalente 315
+
+ATOM H 0
+LIGA 2 6 simples covalente 0
+
+ATOM H 0
+LIGA 4 7 simples covalente 180

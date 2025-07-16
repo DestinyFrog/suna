@@ -10,3 +10,7 @@ function DividirString(texto, separador)
 
     return resultado
 end
+
+function GrausParaRadianos(graus)
+    return graus * (math.pi / 180)
+end

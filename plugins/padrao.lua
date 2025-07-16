@@ -2,6 +2,12 @@
 local distancia_atomos = 30
 local distancia_atomo_ligacao = 8
 
+---@class AtomosComPosicaoPadrao
+---@field atomo Atomo
+---@field x number
+---@field y number
+
+---@type AtomosComPosicaoPadrao[]
 local atomos_com_posicao = {}
 
 ---Trata cada atomo

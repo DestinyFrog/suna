@@ -4,7 +4,7 @@ local Tokens = require "tokens"
 
 MOLECULA = Molecula:new()
 
-local arquivo_entrada_nome = "exemplos/metano.bin.suna"
+local arquivo_entrada_nome = "exemplos/benzeno.bin.suna"
 local arquivo_entrada = io.open(arquivo_entrada_nome, "r")
 
 if arquivo_entrada == nil then
@@ -18,6 +18,7 @@ end
 arquivo_entrada:close()
 
 print(MOLECULA:print())
+
 require "plugins.padrao"
 
 local arquivo_saida = io.open("out.svg", "w")

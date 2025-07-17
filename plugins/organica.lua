@@ -37,8 +37,12 @@ MOLECULA:andar_atomos(calcular_posicao_atomo)
 local min_x = 0
 local min_y = 0
 for _, atomo in pairs(atomos_com_posicao) do
+    if atomo.hidrogenio_ligado_a_carbono then goto continue end
+
     if atomo.x < min_x then min_x = atomo.x end
     if atomo.y < min_y then min_y = atomo.y end
+
+    ::continue::
 end
 
 local cx = math.abs(min_x)

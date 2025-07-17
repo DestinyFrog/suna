@@ -1,21 +1,22 @@
+local Matriz = require "ferramenta.matriz"
 
 ---@class Molecula
 ---@field nomes string[]
 ---@field tags table<string, boolean>
 ---@field atomos Atomo[]
----@field ligacoes Ligacao[][]
+---@field ligacoes Matriz
 local Molecula = {}
 
 Molecula.__index = Molecula
 function Molecula:new()
-    local self = setmetatable({}, Molecula)
+    local obj = setmetatable({}, Molecula)
 
-    self.nomes = {}
-    self.tags = {}
-    self.atomos = {}
-    self.ligacoes = {}
+    obj.nomes = {}
+    obj.tags = {}
+    obj.atomos = {}
+    obj.ligacoes = Matriz:new(0, 0)
 
-    return self
+    return obj
 end
 
 ---adiciona nome
@@ -55,15 +56,7 @@ end
 ---adiciona atomo
 ---@param atomo Atomo
 function Molecula:adiciona_atomo(atomo)
-    local nova_coluna = {}
-    for _ = 1, #self.ligacoes do
-        table.insert(nova_coluna, 0)
-    end
-    table.insert(self.ligacoes, nova_coluna)
-
-    for i = 1, #self.ligacoes do
-        table.insert(self.ligacoes[i], 0)
-    end
+    self.ligacoes:adiciona_vetor()
     table.insert(self.atomos, atomo)
 end
 
@@ -72,7 +65,7 @@ end
 ---@param p2 integer
 ---@param ligacao Ligacao
 function Molecula:adiciona_ligacao(p1, p2, ligacao)
-    self.ligacoes[p1][p2] = ligacao
+    self.ligacoes:new(p1, p2, ligacao)
 end
 
 function Molecula:print()
@@ -94,12 +87,12 @@ function Molecula:print()
     print("\nLIGACOES")
 
     local linha = "  "
-    for i, _ in ipairs(self.ligacoes) do
+    for i, _ in ipairs(self.ligacoes.colunas) do
         linha = linha .. " " .. self.atomos[i].simbolo
     end
     print(linha)
 
-    for x, coluna in ipairs(self.ligacoes) do
+    for x, coluna in ipairs(self.ligacoes.colunas) do
         local s = self.atomos[x].simbolo .. "|"
         for y, ligacao in ipairs(coluna) do
             s = s .. " " .. (ligacao == 0 and " " or "+")

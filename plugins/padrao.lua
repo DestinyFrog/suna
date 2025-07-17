@@ -1,74 +1,57 @@
 
+local Coordenada = require "ferramenta.coordenada"
+local Svg = require "ferramenta.svg"
+
 local distancia_atomos = 30
 local distancia_atomo_ligacao = 8
 
----@class AtomosComPosicaoPadrao
----@field atomo Atomo
----@field x number
----@field y number
-
----@type AtomosComPosicaoPadrao[]
-local atomos_com_posicao = {}
+---@type Coordenada[]
+local coordenadas = {}
 
 ---Trata cada atomo
 ---@param data CaminhadaAtomos
 local function calcular_posicao_atomo(data)
-    local x = 0
-    local y = 0
+    local coord = Coordenada:zero()
+
     if data.ligacao ~= nil then
-        local angulo = data.ligacao.angulo
-        x = atomos_com_posicao[data.indice_anterior].x + distancia_atomos * math.cos(GrausParaRadianos(angulo))
-        y = atomos_com_posicao[data.indice_anterior].y + distancia_atomos * math.sin(GrausParaRadianos(angulo))
+        local radiano = GrausParaRadianos(data.ligacao.angulo)
+        coord = Coordenada:polar(radiano, distancia_atomos)
+
+        local c = coordenadas[data.indice_anterior]
+        coord:soma(c)
     end
 
-    local atomo_com_posicao = {
-        ["atomo"] = data.atomo,
-        ["x"] = x,
-        ["y"] = y
-    }
-
-    atomos_com_posicao[data.indice_atual] = atomo_com_posicao
+    coordenadas[data.indice_atual] = coord
 end
 
 MOLECULA:andar_atomos(calcular_posicao_atomo)
 
-local min_x = 0
-local min_y = 0
-for _, atomo in pairs(atomos_com_posicao) do
-    if atomo.x < min_x then min_x = atomo.x end
-    if atomo.y < min_y then min_y = atomo.y end
-end
+local min = Coordenada.min(coordenadas)
+local c = Coordenada:abs(min.x, min.y)
+Coordenada:somar_por(coordenadas, c)
 
-local cx = math.abs(min_x)
-local cy = math.abs(min_y)
-
-local Svg = require "ferramenta.svg"
 local svg = Svg:new()
 
-for _, atomo in pairs(atomos_com_posicao) do
-    svg:text(atomo.atomo.simbolo,
-        cx + atomo.x,
-        cy + atomo.y)
+for indice, coord in pairs(coordenadas) do
+    local atomo = MOLECULA.atomos[indice]
+    svg:texto(atomo.simbolo, coord)
 end
 
 for a, colunas in ipairs(MOLECULA.ligacoes) do
     for b, ligacao in ipairs(colunas) do
-        if ligacao ~= 0 then
-            local angulo = CalcularAngulo(atomos_com_posicao[a].x, atomos_com_posicao[a].y, atomos_com_posicao[b].x, atomos_com_posicao[b].y)
-            local angulo_antipodal = angulo + math.pi
+        if ligacao == 0 then goto continue end
 
-            local ax_com_distancia = distancia_atomo_ligacao * math.cos(angulo)
-            local ay_com_distancia = distancia_atomo_ligacao * math.sin(angulo)
-            local ax = cx + atomos_com_posicao[a].x + ax_com_distancia
-            local ay = cy + atomos_com_posicao[a].y + ay_com_distancia
+        local angulo = CalcularAngulo(coordenadas[a], coordenadas[b])
 
-            local bx_com_distancia = distancia_atomo_ligacao * math.cos(angulo_antipodal)
-            local by_com_distancia = distancia_atomo_ligacao * math.sin(angulo_antipodal)
-            local bx = cx + atomos_com_posicao[b].x + bx_com_distancia
-            local by = cy + atomos_com_posicao[b].y + by_com_distancia
+        local acoord = Coordenada:polar(angulo, distancia_atomo_ligacao)
+        acoord:soma(coordenadas[a])
 
-            svg:line(ax, ay, bx, by)
-        end
+        local angulo_antipodal = angulo + math.pi
+        local bcoord = Coordenada:polar(angulo_antipodal, distancia_atomo_ligacao)
+        bcoord:soma(coordenadas[b])
+
+        svg:linha(acoord, bcoord)
+        ::continue::
     end
 end
 

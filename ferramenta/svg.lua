@@ -21,19 +21,17 @@ function Svg:new()
 end
 
 ---Desenha uma linha entre ponto (ax, ay) e (bx, by) 
----@param ax number
----@param ay number
----@param bx number
----@param by number
+---@param a Coordenada
+---@param b Coordenada
 ---@param nomeClasse string?
-function Svg:line(ax, ay, bx, by, nomeClasse)
-    self:checar_bordas(ax, ay)
-    self:checar_bordas(bx, by)
+function Svg:linha(a, b, nomeClasse)
+    self:checar_bordas(a.x, a.y)
+    self:checar_bordas(b.x, b.y)
 
     if nomeClasse == nil then nomeClasse = 'svg-ligation' end
 
     local linha = '<line class="%s" x1="%g" y1="%g" x2="%g" y2="%g"></line>'
-    self.texto = self.texto .. string.format(linha, nomeClasse, ax, ay, bx, by)
+    self.texto = self.texto .. string.format(linha, nomeClasse, a.x, a.y, b.x, b.y)
 end
 
 ---Desenha um circulo centrado empty (x, y) com raio (r)
@@ -48,12 +46,11 @@ end
 
 ---Desenha um texto (simbolo) em (x, y)
 ---@param simbolo string
----@param x number
----@param y number
-function Svg:text(simbolo, x, y)
-    self:checar_bordas(x, y)
-    local linha = '<text class="svg-element svg-element-%s" x="%g" y="%g">%s</text>'
-    self.texto = self.texto .. string.format(linha, simbolo, x, y, simbolo)
+---@param coord Coordenada
+function Svg:texto(simbolo, coord)
+    self:checar_bordas(coord.x, coord.y)
+    local linha = '<text class="svg-element svg-element-%s" x="%d" y="%d">%s</text>'
+    self.texto = self.texto .. string.format(linha, simbolo, coord.x, coord.y, simbolo)
 end
 
 ---Desenha um subtexto (simbolo) em (x, y)

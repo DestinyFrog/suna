@@ -1,6 +1,6 @@
 
 ---@class Svg
----@field texto string
+---@field conteudo string
 ---@field min_x number
 ---@field min_y number
 ---@field max_x number
@@ -9,15 +9,15 @@ local Svg = {}
 Svg.__index = Svg
 
 function Svg:new()
-    local self = setmetatable({}, Svg)
+    local obj = setmetatable({}, Svg)
 
-    self.texto = ""
-    self.min_x = 0
-    self.min_y = 0
-    self.max_x = 0
-    self.max_y = 0
+    obj.conteudo = ""
+    obj.min_x = 0
+    obj.min_y = 0
+    obj.max_x = 0
+    obj.max_y = 0
 
-    return self
+    return obj
 end
 
 ---Desenha uma linha entre ponto (ax, ay) e (bx, by) 
@@ -31,7 +31,7 @@ function Svg:linha(a, b, nomeClasse)
     if nomeClasse == nil then nomeClasse = 'svg-ligation' end
 
     local linha = '<line class="%s" x1="%g" y1="%g" x2="%g" y2="%g"></line>'
-    self.texto = self.texto .. string.format(linha, nomeClasse, a.x, a.y, b.x, b.y)
+    self.conteudo = self.conteudo .. string.format(linha, nomeClasse, a.x, a.y, b.x, b.y)
 end
 
 ---Desenha um circulo centrado empty (x, y) com raio (r)
@@ -41,7 +41,7 @@ end
 function Svg:circle(x, y, r)
     self:checar_bordas(x, y)
     local linha = '<circle class="svg-eletrons" cx="%g" cy="%g" r="%g"></circle>'
-    self.texto = self.texto .. string.format(linha, x, y, r)
+    self.conteudo = self.conteudo .. string.format(linha, x, y, r)
 end
 
 ---Desenha um texto (simbolo) em (x, y)
@@ -49,8 +49,8 @@ end
 ---@param coord Coordenada
 function Svg:texto(simbolo, coord)
     self:checar_bordas(coord.x, coord.y)
-    local linha = '<text class="svg-element svg-element-%s" x="%d" y="%d">%s</text>'
-    self.texto = self.texto .. string.format(linha, simbolo, coord.x, coord.y, simbolo)
+    local linha = '<text class="svg-element svg-element-%s" x="%g" y="%g">%s</text>'
+    self.conteudo = self.conteudo .. string.format(linha, simbolo, coord.x, coord.y, simbolo)
 end
 
 ---Desenha um subtexto (simbolo) em (x, y)
@@ -60,7 +60,7 @@ end
 function Svg:subtext(simbolo, x, y)
     self:checar_bordas(x, y)
     local linha = '<circle class="svg-element-charge-border" cx="%g" cy="%g"/><text class="svg-element-charge" x="%g" y="%g">%s</text>'
-    self.content = self.texto .. string.format(linha, x, y, x, y, simbolo)
+    self.conteudo = self.conteudo .. string.format(linha, x, y, x, y, simbolo)
 end
 
 ---define posicao minima e maximo das bordas
@@ -102,7 +102,7 @@ function Svg:build()
     local end_x = self.max_x + SVG_BORDER * 2
     local end_y = self.max_y + SVG_BORDER * 2
 
-    local svg = string.format(svg_template, start_x, start_y, end_x, end_y, css, self.texto)
+    local svg = string.format(svg_template, start_x, start_y, end_x, end_y, css, self.conteudo)
     return svg
 end
 

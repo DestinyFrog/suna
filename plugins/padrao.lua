@@ -41,16 +41,38 @@ for a, colunas in ipairs(MOLECULA.ligacoes) do
     for b, ligacao in ipairs(colunas) do
         if ligacao == 0 then goto continue end
 
-        local angulo = CalcularAngulo(coordenadas[a], coordenadas[b])
+        local orbita = 0
+        local angulos_ligacoes = { 0 }
 
-        local acoord = Coordenada:polar(angulo, distancia_atomo_ligacao)
-        acoord:soma(coordenadas[a])
+        if ligacao.qtd_eletrons == 'dupla' then
+            orbita = 1
+            angulos_ligacoes = { 90, 270 }
+        end
 
-        local angulo_antipodal = angulo + math.pi
-        local bcoord = Coordenada:polar(angulo_antipodal, distancia_atomo_ligacao)
-        bcoord:soma(coordenadas[b])
+        if ligacao.qtd_eletrons == 'tripla' then
+            orbita = 2
+            angulos_ligacoes = { 90, 0, 270 }
+        end
 
-        svg:linha(acoord, bcoord)
+        for i = #angulos_ligacoes, 1, -1 do
+            local angulo_ligacao = GrausParaRadianos(angulos_ligacoes[i])
+
+            local angulo = CalcularAngulo(coordenadas[a], coordenadas[b])
+            local angulo_antipodal = angulo + math.pi
+
+            local acoord = Coordenada:polar(angulo, distancia_atomo_ligacao)
+            acoord:soma(coordenadas[a])
+            local orbita_a = Coordenada:polar(angulo + angulo_ligacao, orbita)
+            orbita_a:soma(acoord)
+
+            local bcoord = Coordenada:polar(angulo_antipodal, distancia_atomo_ligacao)
+            bcoord:soma(coordenadas[b])
+            local orbita_b = Coordenada:polar(angulo_antipodal - angulo_ligacao, orbita)
+            orbita_b:soma(bcoord)
+
+            svg:linha(orbita_a, orbita_b)
+        end
+
         ::continue::
     end
 end

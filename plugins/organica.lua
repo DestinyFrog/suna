@@ -1,98 +1,115 @@
 
-local distancia_atomos = 30
-local distancia_atomo_ligacao = 8
+local Coordenada = require "ferramenta.coordenada"
+local Svg = require "ferramenta.svg"
 
----@class AtomosComPosicaoOrganica
----@field atomo Atomo
+local distancia_atomos = 21
+local distancia_atomo_ligacao = 0
+
+---@class CoordenadaOrganica
 ---@field x number
 ---@field y number
 ---@field hidrogenio_ligado_a_carbono boolean
+local CoordenadaOrganica = {}
+CoordenadaOrganica.__index = Coordenada
 
----@type AtomosComPosicaoOrganica[]
-local atomos_com_posicao = {}
+---constructor de coordenada com padrao zero
+---@return CoordenadaOrganica
+function CoordenadaOrganica:zero()
+    local obj = setmetatable({}, CoordenadaOrganica)
+    obj.__index = Coordenada
+    obj.x = 0
+    obj.y = 0
+    return obj
+end
+
+---@type CoordenadaOrganica[]
+local coordenadas = {}
 
 ---Trata cada atomo
 ---@param data CaminhadaAtomos
 local function calcular_posicao_atomo(data)
-    local x = 0
-    local y = 0
+    ---@type Coordenada
+    local coord = CoordenadaOrganica:zero()
+
     if data.ligacao ~= nil then
-        local angulo = data.ligacao.angulo
-        x = atomos_com_posicao[data.indice_anterior].x + distancia_atomos * math.cos(GrausParaRadianos(angulo))
-        y = atomos_com_posicao[data.indice_anterior].y + distancia_atomos * math.sin(GrausParaRadianos(angulo))
+        local radiano = GrausParaRadianos(data.ligacao.angulo)
+        coord = Coordenada:polar(radiano, distancia_atomos)
+
+        local c = coordenadas[data.indice_anterior]
+        coord:soma(c)
     end
 
-    local atomo_com_posicao = {
-        ["atomo"] = data.atomo,
-        ["x"] = x,
-        ["y"] = y,
-        ["hidrogenio_ligado_a_carbono"] = data.atomo.simbolo == "H" and data.pai.simbolo == "C"
-    }
+    coord.hidrogenio_ligado_a_carbono = data.atomo.simbolo == "H" and data.pai.simbolo == "C"
 
-    atomos_com_posicao[data.indice_atual] = atomo_com_posicao
+    coordenadas[data.indice_atual] = coord
 end
 
 MOLECULA:andar_atomos(calcular_posicao_atomo)
 
-local min_x = 0
-local min_y = 0
-for _, atomo in pairs(atomos_com_posicao) do
-    if atomo.hidrogenio_ligado_a_carbono then goto continue end
+local min = Coordenada.min(coordenadas)
+local c = Coordenada:abs(min.x, min.y)
+Coordenada:somar_por(coordenadas, c)
 
-    if atomo.x < min_x then min_x = atomo.x end
-    if atomo.y < min_y then min_y = atomo.y end
-
-    ::continue::
-end
-
-local cx = math.abs(min_x)
-local cy = math.abs(min_y)
-
-local Svg = require "ferramenta.svg"
 local svg = Svg:new()
 
-for _, atomo in pairs(atomos_com_posicao) do
-    if atomo.atomo.simbolo ~= "C" and atomo.hidrogenio_ligado_a_carbono == false then
-        svg:text(atomo.atomo.simbolo,
-            cx + atomo.x,
-            cy + atomo.y)
-    end
+for indice, coord in pairs(coordenadas) do
+    if coord.hidrogenio_ligado_a_carbono
+        or MOLECULA.atomos[indice].simbolo == "C"
+        then goto continue end
 
+    local atomo = MOLECULA.atomos[indice]
+    svg:texto(atomo.simbolo, coord)
+    ::continue::
 end
 
 for a, colunas in ipairs(MOLECULA.ligacoes) do
     for b, ligacao in ipairs(colunas) do
-        if ligacao ~= 0 then
-            if atomos_com_posicao[b].hidrogenio_ligado_a_carbono then
-                goto continue
-            end
+        if ligacao == 0 then goto continue end
 
-            local angulo = CalcularAngulo(atomos_com_posicao[a].x, atomos_com_posicao[a].y, atomos_com_posicao[b].x, atomos_com_posicao[b].y)
+        local angulos_ligacoes = {
+            { 0, 0 }
+        }
+
+        if ligacao.qtd_eletrons == 'dupla' then
+            angulos_ligacoes = {
+                { 1, 90 },
+                { 1, 270 }
+            }
+        end
+
+        if ligacao.qtd_eletrons == 'tripla' then
+            angulos_ligacoes = {
+                { 2, 90 },
+                { 0, 0 },
+                { 2, 270 }
+            }
+        end
+
+        if coordenadas[a].hidrogenio_ligado_a_carbono or coordenadas[b].hidrogenio_ligado_a_carbono
+            then goto continue end
+
+        for i = #angulos_ligacoes, 1, -1 do
+            local orbita = angulos_ligacoes[i][1]
+            local angulo_ligacao = GrausParaRadianos(angulos_ligacoes[i][2])
+
+            local angulo = CalcularAngulo(coordenadas[a], coordenadas[b])
             local angulo_antipodal = angulo + math.pi
 
-            local distancia = distancia_atomo_ligacao
-            if atomos_com_posicao[a].atomo.simbolo == "C"
-                then distancia = 0 end
+            local acoord = Coordenada:polar(angulo, distancia_atomo_ligacao)
+            acoord:soma(coordenadas[a])
+            local orbita_a = Coordenada:polar(angulo + angulo_ligacao, orbita)
+            orbita_a:soma(acoord)
 
-            local ax_com_distancia = distancia * math.cos(angulo)
-            local ay_com_distancia = distancia * math.sin(angulo)
-            local ax = cx + atomos_com_posicao[a].x + ax_com_distancia
-            local ay = cy + atomos_com_posicao[a].y + ay_com_distancia
+            local bcoord = Coordenada:polar(angulo_antipodal, distancia_atomo_ligacao)
+            bcoord:soma(coordenadas[b])
+            local orbita_b = Coordenada:polar(angulo_antipodal - angulo_ligacao, orbita)
+            orbita_b:soma(bcoord)
 
-            distancia = distancia_atomo_ligacao
-            if atomos_com_posicao[b].atomo.simbolo == "C"
-                then distancia = 0 end
-
-            local bx_com_distancia = distancia * math.cos(angulo_antipodal)
-            local by_com_distancia = distancia * math.sin(angulo_antipodal)
-            local bx = cx + atomos_com_posicao[b].x + bx_com_distancia
-            local by = cy + atomos_com_posicao[b].y + by_com_distancia
-
-            svg:line(ax, ay, bx, by)
+            svg:linha(orbita_a, orbita_b)
         end
 
         ::continue::
     end
 end
 
-SAIDA = svg:build()
+SAIDA = svg:construir()

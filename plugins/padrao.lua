@@ -2,7 +2,7 @@
 local Coordenada = require "ferramenta.coordenada"
 local Svg = require "ferramenta.svg"
 
-local distancia_atomos = 30
+local distancia_atomos = 21
 local distancia_atomo_ligacao = 8
 
 ---@type Coordenada[]
@@ -41,21 +41,28 @@ for a, colunas in ipairs(MOLECULA.ligacoes) do
     for b, ligacao in ipairs(colunas) do
         if ligacao == 0 then goto continue end
 
-        local orbita = 0
-        local angulos_ligacoes = { 0 }
+        local angulos_ligacoes = {
+            { 0, 0 }
+        }
 
         if ligacao.qtd_eletrons == 'dupla' then
-            orbita = 1
-            angulos_ligacoes = { 90, 270 }
+            angulos_ligacoes = {
+                { 1, 90 },
+                { 1, 270 }
+            }
         end
 
         if ligacao.qtd_eletrons == 'tripla' then
-            orbita = 2
-            angulos_ligacoes = { 90, 0, 270 }
+            angulos_ligacoes = {
+                { 2, 90 },
+                { 0, 0 },
+                { 2, 270 }
+            }
         end
 
         for i = #angulos_ligacoes, 1, -1 do
-            local angulo_ligacao = GrausParaRadianos(angulos_ligacoes[i])
+            local orbita = angulos_ligacoes[i][1]
+            local angulo_ligacao = GrausParaRadianos(angulos_ligacoes[i][2])
 
             local angulo = CalcularAngulo(coordenadas[a], coordenadas[b])
             local angulo_antipodal = angulo + math.pi
@@ -77,4 +84,4 @@ for a, colunas in ipairs(MOLECULA.ligacoes) do
     end
 end
 
-SAIDA = svg:build()
+SAIDA = svg:construir()

@@ -1,3 +1,4 @@
+require "configuration"
 
 ---@class Svg
 ---@field conteudo string
@@ -38,7 +39,7 @@ end
 ---@param x number
 ---@param y number
 ---@param r number
-function Svg:circle(x, y, r)
+function Svg:circulo(x, y, r)
     self:checar_bordas(x, y)
     local linha = '<circle class="svg-eletrons" cx="%g" cy="%g" r="%g"></circle>'
     self.conteudo = self.conteudo .. string.format(linha, x, y, r)
@@ -57,7 +58,7 @@ end
 ---@param simbolo string
 ---@param x number
 ---@param y number
-function Svg:subtext(simbolo, x, y)
+function Svg:subtexto(simbolo, x, y)
     self:checar_bordas(x, y)
     local linha = '<circle class="svg-element-charge-border" cx="%g" cy="%g"/><text class="svg-element-charge" x="%g" y="%g">%s</text>'
     self.conteudo = self.conteudo .. string.format(linha, x, y, x, y, simbolo)
@@ -75,9 +76,7 @@ end
 
 ---constroe o codigo svg e associa a templates
 ---@return string
-function Svg:build()
-    require "configuration"
-
+function Svg:construir()
     local css_file = io.open(SUNA_CSS, "r")
     if css_file == nil then
         print("template 'suna.css' não encontrado")

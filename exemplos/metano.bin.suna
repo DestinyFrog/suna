@@ -2,27 +2,14 @@ NOME benzeno
 STAG orgânico
 STAG aromático
 STAG insaturado
+
 ATOM C 0
-ATOM C 0
-LIGA 1 2 simples covalente 30
-ATOM C 0
-LIGA 2 3 dupla covalente 90
-ATOM C 0
-LIGA 3 4 simples covalente 150
-ATOM C 0
-LIGA 4 5 dupla covalente 210
-ATOM C 0
-LIGA 5 6 simples covalente 270
-LIGA 6 1 dupla covalente 330
-ATOM H
-LIGA 1 7 simples covalente 270
-ATOM H
-LIGA 2 8 simples covalente 330
-ATOM H
-LIGA 3 9 simples covalente 30
-ATOM H
-LIGA 4 10 simples covalente 90
-ATOM H
-LIGA 5 11 simples covalente 150
-ATOM H
-LIGA 6 12 simples covalente 210
+ATOM H 0
+ATOM H 0
+ATOM H 0
+ATOM H 0
+
+LIGA 1 2 simples covalente 0
+LIGA 1 3 simples covalente 90
+LIGA 1 4 simples covalente 180
+LIGA 1 5 simples covalente 270

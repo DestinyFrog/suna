@@ -1,0 +1,47 @@
+
+.svg-element {
+	font-family: 'Courier New', Courier, monospace;
+	font-size: 12px;
+	fill: black;
+	font-weight: bold;
+	dominant-baseline: middle;
+	text-anchor: middle;
+}
+
+.svg-element-charge-border {
+	stroke: black;
+	stroke-width: 0.3px;
+	fill: white;
+	r: 2.5px;
+}
+
+.svg-element-charge {
+	font-family: 'Courier New', Courier, monospace;
+	font-size: 3px;
+	fill: black;
+	dominant-baseline: central;
+	text-anchor: middle;
+}
+
+.svg-ligation {
+	stroke-width: 1px;
+	stroke: black;
+}
+
+$atomos: (
+    "H":  #727272,
+    "S":  #f7cd29,
+    "P":  #f79329,
+    "Na": #f7d653,
+    "Cl": #21d122,
+    "F":  #aed482,
+    "N":  #7878fa,
+    "O":  #eb3738,
+    "C":  #000000,
+);
+
+@each $simbolo, $cor in $atomos {
+    .svg-element-#{$simbolo} {
+        fill: #{$cor};
+    }
+}

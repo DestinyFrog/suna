@@ -1,9 +1,10 @@
+local Matriz = require "ferramenta.matriz"
 
 ---@class Molecula
 ---@field nomes string[]
 ---@field tags table<string, boolean>
 ---@field atomos Atomo[]
----@field ligacoes Ligacao[][]
+---@field ligacoes Matriz
 local Molecula = {}
 
 Molecula.__index = Molecula
@@ -13,7 +14,7 @@ function Molecula:new()
     obj.nomes = {}
     obj.tags = {}
     obj.atomos = {}
-    obj.ligacoes = {}
+    obj.ligacoes = Matriz:new(0)
 
     return obj
 end
@@ -55,16 +56,7 @@ end
 ---adiciona atomo
 ---@param atomo Atomo
 function Molecula:adiciona_atomo(atomo)
-    local nova_coluna = {}
-    for _ = 1, #self.ligacoes do
-        table.insert(nova_coluna, 0)
-    end
-    table.insert(self.ligacoes, nova_coluna)
-
-    for _, coluna in ipairs(self.ligacoes) do
-        table.insert(coluna, 0)
-    end
-
+    self.ligacoes:add_vetor()
     table.insert(self.atomos, atomo)
 end
 
@@ -73,7 +65,7 @@ end
 ---@param p2 integer
 ---@param ligacao Ligacao
 function Molecula:adiciona_ligacao(p1, p2, ligacao)
-    self.ligacoes[p1][p2] = ligacao
+    self.ligacoes:set(ligacao, p1, p2)
 end
 
 function Molecula:print()
@@ -141,9 +133,9 @@ function Molecula:andar_atomos(fn, indice_atual, ligacao, ja_passou, indice_ante
         ["indice_anterior"] = indice_anterior
     }
 
-    for proximo_indice, ligacao in ipairs(self.ligacoes[indice_atual]) do
-        if ligacao ~= 0 then
-            self:andar_atomos(fn, proximo_indice, ligacao, ja_passou, indice_atual)
+    for proximo_indice, proxima_ligacao in ipairs(self.ligacoes:get_coluna(indice_atual)) do
+        if proxima_ligacao ~= self.ligacoes.nullValue then
+            self:andar_atomos(fn, proximo_indice, proxima_ligacao, ja_passou, indice_atual)
         end
     end
 end

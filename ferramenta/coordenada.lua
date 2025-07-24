@@ -64,6 +64,22 @@ function Coordenada.min(coordenadas)
     return min
 end
 
+---calcula o valor minimo entre varias coordenadas
+---@param coordenadas Coordenada[]
+---@param fn fun(indice: number, coordenada: Coordenada): boolean
+---@return Coordenada[]
+function Coordenada.filter(coordenadas, fn)
+    local nova_coordenadas = {}
+
+    for indice, coordenada in pairs(coordenadas) do
+        if fn(indice, coordenada) then
+            table.insert(nova_coordenadas, coordenada)
+        end
+    end
+
+    return nova_coordenadas
+end
+
 ---soma uma coordenada com outra
 ---@param coord Coordenada
 function Coordenada:soma(coord)

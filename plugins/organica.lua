@@ -1,4 +1,3 @@
-
 local Coordenada = require "ferramenta.coordenada"
 local Svg = require "ferramenta.svg"
 
@@ -19,6 +18,7 @@ function CoordenadaOrganica:zero()
     obj.__index = Coordenada
     obj.x = 0
     obj.y = 0
+    obj.hidrogenio_ligado_a_carbono = false
     return obj
 end
 
@@ -46,7 +46,14 @@ end
 
 MOLECULA:andar_atomos(calcular_posicao_atomo)
 
-local min = Coordenada.min(coordenadas)
+---@param indice number
+---@param coordenada CoordenadaOrganica
+local function filtrar_atomos(indice, coordenada)
+    return not coordenada.hidrogenio_ligado_a_carbono
+end
+
+local filtered_coord = Coordenada.filter(coordenadas, filtrar_atomos)
+local min = Coordenada.min(filtered_coord)
 local c = Coordenada:abs(min.x, min.y)
 Coordenada:somar_por(coordenadas, c)
 
@@ -62,54 +69,52 @@ for indice, coord in pairs(coordenadas) do
     ::continue::
 end
 
-for a, colunas in ipairs(MOLECULA.ligacoes) do
-    for b, ligacao in ipairs(colunas) do
-        if ligacao == 0 then goto continue end
+local angulos_ligacoes = {
+    ["simples"] = {
+        { 0, 0 }
+    },
+    ["dupla"] = {
+        { 0.8, 90 },
+        { 0.8, 270 }
+    },
+    ["tripla"] = {
+        { 2, 90 },
+        { 0, 0 },
+        { 2, 270 }
+    }
+}
 
-        local angulos_ligacoes = {
-            { 0, 0 }
-        }
+--- desenha cada ligação
+---@param a number
+---@param b number
+---@param ligacao Ligacao
+local function desenhar_ligacoes(a, b, ligacao)
+    local angulo_ligacao = angulos_ligacoes[ligacao.qtd_eletrons or "simples"]
 
-        if ligacao.qtd_eletrons == 'dupla' then
-            angulos_ligacoes = {
-                { 1, 90 },
-                { 1, 270 }
-            }
-        end
+    if coordenadas[a].hidrogenio_ligado_a_carbono
+        or coordenadas[b].hidrogenio_ligado_a_carbono
+        then return end
 
-        if ligacao.qtd_eletrons == 'tripla' then
-            angulos_ligacoes = {
-                { 2, 90 },
-                { 0, 0 },
-                { 2, 270 }
-            }
-        end
+    for i = #angulo_ligacao, 1, -1 do
+        local orbita = angulo_ligacao[i][1]
+        local angulo_orbita = GrausParaRadianos(angulo_ligacao[i][2])
 
-        if coordenadas[a].hidrogenio_ligado_a_carbono or coordenadas[b].hidrogenio_ligado_a_carbono
-            then goto continue end
+        local angulo = CalcularAngulo(coordenadas[a], coordenadas[b])
+        local angulo_antipodal = angulo + math.pi
 
-        for i = #angulos_ligacoes, 1, -1 do
-            local orbita = angulos_ligacoes[i][1]
-            local angulo_ligacao = GrausParaRadianos(angulos_ligacoes[i][2])
+        local acoord = Coordenada:polar(angulo, distancia_atomo_ligacao)
+        acoord:soma(coordenadas[a])
+        local orbita_a = Coordenada:polar(angulo + angulo_orbita, orbita)
+        orbita_a:soma(acoord)
 
-            local angulo = CalcularAngulo(coordenadas[a], coordenadas[b])
-            local angulo_antipodal = angulo + math.pi
+        local bcoord = Coordenada:polar(angulo_antipodal, distancia_atomo_ligacao)
+        bcoord:soma(coordenadas[b])
+        local orbita_b = Coordenada:polar(angulo_antipodal - angulo_orbita, orbita)
+        orbita_b:soma(bcoord)
 
-            local acoord = Coordenada:polar(angulo, distancia_atomo_ligacao)
-            acoord:soma(coordenadas[a])
-            local orbita_a = Coordenada:polar(angulo + angulo_ligacao, orbita)
-            orbita_a:soma(acoord)
-
-            local bcoord = Coordenada:polar(angulo_antipodal, distancia_atomo_ligacao)
-            bcoord:soma(coordenadas[b])
-            local orbita_b = Coordenada:polar(angulo_antipodal - angulo_ligacao, orbita)
-            orbita_b:soma(bcoord)
-
-            svg:linha(orbita_a, orbita_b)
-        end
-
-        ::continue::
+        svg:linha(orbita_a, orbita_b)
     end
 end
 
+MOLECULA.ligacoes:andar(desenhar_ligacoes)
 SAIDA = svg:construir()

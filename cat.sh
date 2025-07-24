@@ -2,6 +2,6 @@
 
 while true; do
     clear;
-    lua main.lua;
+    ./suna exemplos/benzeno.bin.suna -s benzeno.svg -p padrao
     sleep 1;
 done

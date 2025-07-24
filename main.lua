@@ -4,7 +4,7 @@ local Tokens = require "tokens"
 
 MOLECULA = Molecula:new()
 
-local arquivo_entrada_nome = "exemplos/fosforo_branco.bin.suna"
+local arquivo_entrada_nome = "exemplos/benzeno.bin.suna"
 local arquivo_entrada = io.open(arquivo_entrada_nome, "r")
 
 if arquivo_entrada == nil then

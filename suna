@@ -1,0 +1,57 @@
+#!/home/calisto/.asdf/shims/lua
+
+require "os"
+local Molecula = require "modelo.molecula"
+local Tokens = require "tokens"
+
+local arquivo_entrada_nome = arg[1] or nil
+local arquivo_saida_nome = "out.svg"
+local plugin = "padrao"
+
+if arquivo_entrada_nome == nil then
+    print "arquivo de entrada não encontrado"
+    os.exit(1)
+end
+
+for i = 1, #arg do
+    if arg[i] == '-s' then
+        if i >= #arg then
+            print "arquivo de saída não foi informado"
+            os.exit(1)
+        end
+        arquivo_saida_nome = arg[i + 1]
+    end
+
+    if arg[i] == '-p' then
+        if i >= #arg then
+            print "plugin não foi informado"
+            os.exit(1)
+        end
+        plugin = arg[i + 1]
+    end
+end
+
+MOLECULA = Molecula:new()
+
+local arquivo_entrada = io.open(arquivo_entrada_nome, "r")
+
+if arquivo_entrada == nil then
+    print "arquivo de entrada não encontrado"
+    os.exit(1)
+end
+
+for linha in arquivo_entrada:lines() do
+    Tokens.tokenizar(MOLECULA, linha)
+end
+arquivo_entrada:close()
+
+require("plugins." .. plugin)
+
+local arquivo_saida = io.open(arquivo_saida_nome, "w")
+if arquivo_saida == nil then
+    print "arquivo de saída não encontrado"
+    os.exit(1)
+end
+
+arquivo_saida:write(SAIDA)
+arquivo_saida:close()

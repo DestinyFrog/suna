@@ -1,16 +1,15 @@
 
 ---@class Matrix
 ---@field private cols table
-local Matrix = {
-    nullValue = 0
-}
+local Matrix = { nullValue = 0 }
+Matrix.__index = Matrix
 
 --- Matrix constructor
 ---@param num_cols number?
 ---@param num_rows number?
 ---@return Matrix
-function Matrix:new(num_cols, num_rows)
-    local obj = setmetatable({}, self)
+function Matrix.new(num_cols, num_rows)
+    local obj = setmetatable({}, Matrix)
 
     if num_cols == nil then num_cols = 0 end
     if num_rows == nil then num_rows = num_cols end
@@ -23,7 +22,7 @@ function Matrix:new(num_cols, num_rows)
 
     for _ = 1, num_rows do
         for j = 1, num_rows do
-            table.insert(obj.colunas[j], self.nullValue)
+            table.insert(obj.cols[j], Matrix.nullValue)
         end
     end
 

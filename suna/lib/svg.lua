@@ -1,4 +1,4 @@
-require "configuration"
+require "suna.configuration"
 
 ---@class Svg
 ---@field content string
@@ -7,8 +7,9 @@ require "configuration"
 ---@field max_x number
 ---@field max_y number
 local Svg = {}
+Svg.__index = Svg
 
-function Svg:new()
+function Svg.new()
     local obj = setmetatable({}, Svg)
 
     obj.content = ""
@@ -116,3 +117,5 @@ function Svg:build()
     local svg = string.format(svg_template, start_x, start_y, end_x, end_y, css, self.content)
     return svg
 end
+
+return Svg

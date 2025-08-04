@@ -1,0 +1,35 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+body {
+    background-color: black;
+
+    width: 100vw;
+    height: 100vh;
+}
+
+$categories: (
+    "hidrogenio": #8c0250,
+    "metal_alcalino": #f5a80b,
+    "metal_alcalino_terroso": #ff6600,
+    "metal_de_transicao": #970700,
+    "ametal": #008000,
+    "semimetal": #aa007a,
+    "metal_representativo": #ff007f,
+    "halogenio": #304ee6,
+    "gas_nobre": #7525FA,
+    "lantanideo": #054f77,
+    "actinideo": #4169e1,
+    "desconhecido": #333333
+);
+
+@each $category, $color in $categories {
+    .#{$category} {
+        background-color: $color;
+    }
+}

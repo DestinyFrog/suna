@@ -1,0 +1,25 @@
+NOME etanol
+STAG orgânico
+STAG álcool
+
+ATOM C 0
+ATOM C 0
+ATOM O 0
+ATOM H 0
+ATOM H 0
+ATOM H 0
+ATOM H 0
+ATOM H 0
+ATOM H 0
+
+LIGA 1 2 simple covalent 0
+LIGA 2 3 simple covalent 60
+
+LIGA 1 4 simple covalent 120
+LIGA 1 5 simple covalent 240
+LIGA 1 6 simple covalent 180
+
+LIGA 2 7 simple covalent 300
+LIGA 2 8 simple covalent 0
+
+LIGA 3 9 simple covalent 0

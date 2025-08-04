@@ -1,9 +1,7 @@
 local Coordinate = require "suna.lib.coordinate"
 local Svg = require "suna.lib.svg"
 local Math = require "suna.lib.math"
-
-local atoms_distance = 21
-local atom_ligation_distance = 8
+require "suna.configuration"
 
 ---@type Coordinate[]
 local coordinates = {}
@@ -15,7 +13,7 @@ local function calc_atom_position(data)
 
     if data.ligation ~= nil then
         local radiano = Math.degreesToRadians(data.ligation.angle)
-        coord = Coordinate.polar(radiano, atoms_distance)
+        coord = Coordinate.polar(radiano, STANDARD_ATOMS_DISTANCE)
 
         local c = coordinates[data.last_index]
         coord:sum(c)
@@ -66,12 +64,12 @@ local function draw_ligations(a, b, ligation)
         local angle = Coordinate.angle_between_two_points(coordinates[a], coordinates[b])
         local antipodal_angle = angle + math.pi
 
-        local acoord = Coordinate.polar(angle, atom_ligation_distance)
+        local acoord = Coordinate.polar(angle, STANDARD_ATOM_LIGATION_DISTANCE)
         acoord:sum(coordinates[a])
         local orbit_a = Coordinate.polar(angle + angle_orbit, orbit)
         orbit_a:sum(acoord)
 
-        local bcoord = Coordinate.polar(antipodal_angle, atom_ligation_distance)
+        local bcoord = Coordinate.polar(antipodal_angle, STANDARD_ATOM_LIGATION_DISTANCE)
         bcoord:sum(coordinates[b])
         local orbit_b = Coordinate.polar(antipodal_angle - angle_orbit, orbit)
         orbit_b:sum(bcoord)

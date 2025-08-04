@@ -1,15 +1,15 @@
-NOME benzeno
-STAG orgânico
-STAG aromático
-STAG insaturado
-
-ATOM C 0
+NOME água
+STAG inorgânico
+ATOM S 0
+ATOM O 0
+LIGA 1 2 simple covalent
+ATOM O 0
+LIGA 1 3 double covalent
+ATOM O 0
+LIGA 1 4 simple covalent
+ATOM O 0
+LIGA 1 5 double covalent
 ATOM H 0
+LIGA 2 6 simple covalent
 ATOM H 0
-ATOM H 0
-ATOM H 0
-
-LIGA 1 2 simples covalente 0
-LIGA 1 3 simples covalente 90
-LIGA 1 4 simples covalente 180
-LIGA 1 5 simples covalente 270
+LIGA 4 7 simple covalent

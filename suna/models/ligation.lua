@@ -7,7 +7,6 @@
 ---@alias LigationType
 ---| 'ionic'
 ---| 'covalent'
----| 'hydrogen_ligation'
 
 ---@class Ligation
 ---@field eletrons_number EletronsNumber

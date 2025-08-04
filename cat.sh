@@ -2,6 +2,6 @@
 
 while true; do
     clear;
-    ./suna exemplos/benzeno.bin.suna -s benzeno.svg -p padrao
+    lua suna/suna.lua examples/metano.bin.suna;
     sleep 1;
 done

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Component } from "svelte";
+import type { Component } from "svelte";
 import type { Vec2 } from "./util";
 
 let {
@@ -40,7 +40,7 @@ function mouseDown(ev:MouseEvent) {
 }
 
 function close() {
-
+    div_app.remove()
 }
 </script>
 
@@ -56,21 +56,20 @@ function close() {
     </main>
 </div>
 
-<style scoped lang="scss">
-$window-border-color: black;
+<style scoped>
+    .window {
+        background-color: rgb(71, 71, 71);
+        
+        border: 2px solid black;
+        border-radius: 5px;
 
-.window {
-    background-color: rgb(71, 71, 71);
-    
-    border: 2px solid $window-border-color;
-    border-radius: 5px;
-
-    position: fixed;
-    top: 0;
-    left: 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
 
     .header {
-        border-bottom: 2px solid $window-border-color;
+        border-bottom: 2px solid black;
 
         display: flex;
         flex-direction: row;
@@ -78,30 +77,29 @@ $window-border-color: black;
         padding: 4px;
         justify-content: space-between;
         user-select: none;
+    }
 
-        .close-button {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background-color: red;
-            border: 2px solid white;
-        }
+    .header .close-button {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background-color: red;
+        border: 2px solid white;
+    }
 
-        .title {
-            color: white;
-            font-family: 'Courier New', Courier, monospace;
-            font-weight: 700;
-            margin-right: 10px;
-        }
+    .header .title {
+        color: white;
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: 700;
+        margin-right: 10px;
     }
 
     .content {
-        border: 2px solid $window-border-color;
+        border: 2px solid black;
         border-radius: 5px;
         margin: 4px;
         min-width: 100px;
         min-height: 100px;
         background-color: aliceblue;
     }
-}
 </style>

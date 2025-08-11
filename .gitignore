@@ -1,6 +1,8 @@
 .vscode
 out.svg
 
+.env
+
 # Logs
 logs
 *.log

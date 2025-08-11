@@ -1,11 +1,9 @@
 <script lang="ts">
-    import type { Element } from "./Element";
+    import type { ElementPayload } from "./Element";
     import { capitalize, treatCategory } from "./util";
 
-    let {
-        element
-    } : {
-        element: Element
+    let { element } : {
+        element: ElementPayload
     } = $props()
 </script>
 
@@ -15,20 +13,14 @@
     <p class="name">{ capitalize(element.oficial_name) }</p>
     <p class="atomic-mass">{ element.atomic_mass } u</p>
 
-    {#snippet layers(element:Element)}
-        {@const layers = JSON.parse(element.layers) as number[]}
-    
-        <ul class="layers">
-            {#each layers as layer}
-                <li>{ layer }</li>
-            {/each}
-        </ul>
-    {/snippet}
-
-    {@render layers(element)}
+    <ul class="layers">
+        {#each element.layers as layer}
+            <li>{ layer }</li>
+        {/each}
+    </ul>
 </div>
 
-<style scoped lang="scss">
+<style scoped>
 .element {
     position: relative;
     display: flex;
@@ -40,28 +32,31 @@
 
     color: white;
 
-    .symbol {
-        font-size: 36px;
-        text-align: center;
-        margin: 14px 0px;
-        font-weight: bolder;
-    }
+}
 
-    .name {
-        text-align: center;
-        margin-bottom: 8px;
-    }
+.symbol {
+    font-size: 36px;
+    text-align: center;
+    margin: 14px 0px;
+    font-weight: bolder;
+}
 
-    .atomic-mass {
-        text-align: center;
-    }
+.name {
+    text-align: center;
+    margin-bottom: 8px;
+}
 
-    .layers {
-        list-style: none;
-        position: absolute;
-        right: 0;
-        text-align: right;
-        margin: 4px;
-    }
+.atomic-mass {
+    text-align: center;
+}
+
+.layers {
+    list-style: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    text-align: right;
+    margin: 4px;
+    font-size: 13px;
 }
 </style>

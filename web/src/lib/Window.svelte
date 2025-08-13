@@ -39,13 +39,36 @@ function mouseDown(ev:MouseEvent) {
         document.removeEventListener('mousemove', mouseMove))
 }
 
+function touchMove(ev:TouchEvent) {
+    if (ev.touches[0].clientX > 0 && ev.touches[0].clientX < document.body.clientWidth) {
+        drag_position.x = before_drag_position.x - ev.touches[0].clientX
+        before_drag_position.x = ev.touches[0].clientX
+        div_app.style.left = `${div_app.offsetLeft - drag_position.x}px`	
+    }
+
+    if (ev.touches[0].clientY > 0 && ev.touches[0].clientY < document.body.clientHeight) {
+        drag_position.y = before_drag_position.y - ev.touches[0].clientY
+        before_drag_position.y = ev.touches[0].clientY
+        div_app.style.top = `${div_app.offsetTop - drag_position.y}px`
+    }
+}
+
+function touchDown(ev:TouchEvent) {
+    before_drag_position.x = ev.touches[0].clientX
+    before_drag_position.y = ev.touches[0].clientY
+
+    document.addEventListener('touchmove', touchMove)
+    document.addEventListener('touchend', _ =>
+        document.removeEventListener('touchmove', touchMove))
+}
+
 function close() {
     div_app.remove()
 }
 </script>
 
 <div class="window" bind:this={div_app}>
-    <header class="header" onmousedown={mouseDown}
+    <header class="header" onmousedown={mouseDown} ontouchstart={touchDown}
         role="button" tabindex="0">
         <p class="title">{ title }</p>
         <button class="close-button" aria-label="close" onclick={close}></button>
